@@ -27,9 +27,11 @@ class window:
         while run:
             for event in pyg.event.get():
                 if event.type == pyg.QUIT: run=False
-                if event.type == pyg.MOUSEBUTTONUP:
+                if event.type == pyg.MOUSEBUTTONUP: #si el usuario hace click a la ventana
                     x, y = pyg.mouse.get_pos()
-                    if (x>=50) and (x<=550) and (y>100) and (y<600):
+                    if (x>=50) and (x<=550) and (y>100) and (y<600): #se asegura que el mouse se encuentre en el tablero
+                        #los siguientes dos ciclos los utiliza para saber en que recuadro del tablero dio click mediante 
+                        #el uso de distancia euclidiana entre 2 puntos
                         min= 100000000
                         for i in range(0,10):
                             for j in range(0,10):
@@ -40,16 +42,18 @@ class window:
                                     min=d
                                     I=i                            
                                     J=j
-                        if tablero1.getTablero(I,J)>0: #atino a un barco
+                        #comienza a realizar los cambios en el tablero
+                        if tablero1.getTablero(I,J)>0: #el jugador atino a un barco
                             tablero1.setTablero(I,J,-1)
+                            #realiza su movimiento el bot
                             x= random.randint(0,9)
                             y= random.randint(0,9)
-                            if tablero2.getTablero(x,y)>0:
+                            if tablero2.getTablero(x,y)>0: #el bot/la maquina le atino a un barco
                                 tablero2.setTablero(x,y,-1)
-                            elif tablero2.getTablero(x,y)==0:
+                            elif tablero2.getTablero(x,y)==0:# el bot no le atino a un barco
                                 tablero2.setTablero(x,y,-2)
-                            self.turno=self.turno+1
-                        elif tablero1.getTablero(I,J)==0: #no le atino a un barco
+                            self.turno=self.turno+1 #aumenta el turno
+                        elif tablero1.getTablero(I,J)==0: # el jugador no le atino a un barco
                             tablero1.setTablero(I,J,-2)
                             x= random.randint(0,9)
                             y= random.randint(0,9)
@@ -58,11 +62,13 @@ class window:
                             elif tablero2.getTablero(x,y)==0:
                                 tablero2.setTablero(x,y,-2)
                             self.turno=self.turno+1
+                        #proceso para terminar el progra
                         if self.perder():
                             run= False
-                           
+            #metodo para realizar todo detalle grafico
             self.base(tablero1,tablero2)
         self.quit()
+    #realiza tanto el fondo, como las diferentes lineas y mensajes que sean necesarios en la ventana
     def base(self,tablero1,tablero2):
         self.screen.blit(self.bg,(0,0))
         font= pyg.font.Font('Fixedsys.ttf',32)
@@ -79,6 +85,7 @@ class window:
         pyg.display.flip()
     def quit(self):
         pyg.quit()
+    #dibuja los tableros, si enemigo es igual a Falso, debe dibujar el tablero del jugador
     def Board(self,tablero,enemigo):
         if not enemigo:
             tleft=50
@@ -97,6 +104,7 @@ class window:
         pyg.draw.line(self.screen,black,bottomright,bottomleft,3)
         pyg.draw.line(self.screen,black,topright,bottomright,3)
         pyg.draw.line(self.screen,black,topleft,bottomleft,3)
+        #realiza el tablero y a su vez va dibujando todos los cambios que se presenten en la matriz que ubica los barcos
         for i in range (0,10):
             for j in range(0,10):
                 left= tablero.getCoordenadas(i,j)[0]
@@ -121,7 +129,7 @@ class window:
         
 
 
-
+#permite el inicio del juego
 class start():
     width=1200
     height= 700
@@ -137,7 +145,7 @@ class start():
         pyg.display.set_icon(self.Ship)
     def run (self):
         run= True
-        font=pyg.font.Font('Fixedsys.ttf',100)
+        font=pyg.font.Font('Fixedsys.ttf',100)#estilo de letra utilizado en el programa
         font2=pyg.font.Font('Fixedsys.ttf',50)
         text=font.render('BATALLA NAVAL',True,(0,0,0),None)
         text2= font2.render('Empezar',True,(0,0,0),None)
@@ -145,12 +153,13 @@ class start():
         button= text2.get_rect()
         textrect.center=(self.width/2,self.height/2)
         button.center=(self.width/2,self.height/2+200)
+        #mientras el ciclo se mantenga activo se realiza cada linea
         while run:
             for event in pyg.event.get():
                 if event.type == pyg.QUIT: run= False
-                if event.type == pyg.MOUSEBUTTONUP:
+                if event.type == pyg.MOUSEBUTTONUP: #si el usuario da click en la ventana
                     x,y = pyg.mouse.get_pos()
-                    if(x>=button.left) and (x<=button.left+button.width) and (y>=button.top) and (y<=button.top+button.height):
+                    if(x>=button.left) and (x<=button.left+button.width) and (y>=button.top) and (y<=button.top+button.height): #validación del boton
                         run=False
                         self.out=True
             
@@ -161,9 +170,11 @@ class start():
             self.screen.blit(text2,button)
             pyg.display.flip()
         self.quit()
+    #sale del programa
     def quit(self):
         pyg.quit()
-
+        
+#hace la ventana de configuración del juego (pide el numero de barcos)
 class menu:
     out=False
     def __init__(self):
@@ -176,25 +187,28 @@ class menu:
         self.run()
         self.menu.mainloop()
     def run(self):
+        #introduce strings a la ventana
         mbg= tk.Canvas(self.menu,width=1200,height=700)
         mbg.create_text(500,50,text='Numero de submarinos que desea:',fill="black",font=self.font)
         mbg.create_text(500,200,text='Numero de destructores que desea:',fill="black",font=self.font)
         mbg.create_text(500,350,text='Numero de crueceros que desea:',fill="black",font=self.font)
         mbg.create_text(500,500,text='Numero de portaviones que desea:',fill="black",font=self.font)
         mbg.pack()
-        self.Text_1= tk.Entry(self.menu,None,borderwidth= 2,font=self.font,width=10)
+        #inicializa y ubica las entradas del sistema
+        self.Text_1= tk.Entry(self.menu,None,borderwidth= 2,font=self.font,width=10)#nro de subsmarinos
         self.Text_1.place(x=100,y=100)
-        self.Text_2=tk.Entry(self.menu,None,borderwidth= 2,font=self.font,width=10)
+        self.Text_2=tk.Entry(self.menu,None,borderwidth= 2,font=self.font,width=10)#nro de destructores
         self.Text_2.place(x=100,y=250)
-        self.Text_3=tk.Entry(self.menu,None,borderwidth= 2,font=self.font,width=10)
+        self.Text_3=tk.Entry(self.menu,None,borderwidth= 2,font=self.font,width=10)#nro de cruceros
         self.Text_3.place(x=100,y=400)
-        self.Text_4=tk.Entry(self.menu,None,borderwidth= 2,font=self.font,width=10)
+        self.Text_4=tk.Entry(self.menu,None,borderwidth= 2,font=self.font,width=10)#nro de portaviones
         self.Text_4.place(x=100,y=550)
+        #inicializa y ubica el boton para empezar el juego
         Boton= tk.Button(self.menu,text='Empezar',
-        command= self.verificarText ,
+        command= self.verificarText , #comando a realizar al momento de oprimir
         font= self.font)
         Boton.place(x=900,y=200)
-
+    #permite verificar si los nros de barcos no excede el tamaño original del juego
     def verificar(self):
         if(self.submarinos<=4) and (self.destructores<=3) and (self.cruceros<=2) and (self.portaviones<=1) :
             if (self.submarinos<=0) and (self.destructores<=0) and (self.cruceros<=2) and (self.portaviones<=0):
@@ -204,7 +218,7 @@ class menu:
                 self.out=True
         else:
             messagebox.showinfo(title="Batalla Naval",message='el numero de barcos es mayor al esperado')
-
+    #validaciones de las entradas
     def verificarText(self):
         if(self.Text_1.get()==''):
             self.submarinos=0
@@ -225,7 +239,7 @@ class menu:
             self.portaviones=0
         else:
             self.portaviones=int(self.Text_4.get())
-        
+        #verifica antes de mandar el juego
         self.verificar()
 
 

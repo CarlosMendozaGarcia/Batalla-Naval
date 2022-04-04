@@ -1,6 +1,10 @@
 import numpy as np
-
+#clase que define la estructura del batalla naval, contiene 2 matrices, una que almacena los barcos 
+#y la segunda servira para almacenar las coordenadas (ayuda grfica)
 class tablero:
+    #atributos:
+    #matriz= almacena la ubicación de los barcos
+    #coordenadas= almacenas las coordenadas de cada recuadro
     def __init__(self,enemigo):
         self.matriz=np.zeros((10,10), dtype= int)
         self.coordenadas= np.zeros((10,10), dtype= tuple)

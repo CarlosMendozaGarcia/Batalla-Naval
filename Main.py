@@ -1,8 +1,8 @@
 import random
 import numpy as np
-from Game import window,start,menu
-from Tablero import tablero
-
+from Game import window,start,menu #importa las clases que realizan la parte grafica del programa
+from Tablero import tablero #importa la clase en la cual se realizo el sistema
+#clase barco
 class Barco:
     nro= 0
     def __init__(self, nombre: str,tamaño: int,tablero):
@@ -18,6 +18,7 @@ class Barco:
         return self._nombre
     def getNro(self):
         return self._nro
+    #ubica los barcos y lo hace segun su nombre
     def ubicar(self, tablero ):
         if self.getName()=='Submarino':
             x= random.randint(0,9)
@@ -26,7 +27,7 @@ class Barco:
         elif self.getName()=='Destructor':
             x= random.randint(0,8)
             y= random.randint(0,8)
-            v= random.randint(0,1)
+            v= random.randint(0,1) #0 si el barco va horizontal y 1 si va vertical
             if v==0:
                 tablero.setTablero(x,y,2)
                 tablero.setTablero(x+1,y,2)
@@ -63,14 +64,11 @@ class Barco:
 
 Jugador1= tablero(False)#tablero del enemigo
 Enemigo= tablero(True)#tablero en el que juega el enemigo(mapa del jugador 1)
-BatallaNavalMenu= start()
+BatallaNavalMenu= start() #Inicializa un objeto clase start() hecho en game.py
+#inicializa el programa por primera vez
 Run=True
 while Run:
-    if BatallaNavalMenu.out and BatallaNavalConfig.out:
-        Submarinos1=[]
-        Destructores1=[]
-        Cruceros1=[]
-        portaviones1=[]
+    if BatallaNavalMenu.out and BatallaNavalConfig.out: #si el programa paso por la ventana de inicio y configuración
         for i in range(0,BatallaNavalConfig.submarinos):
             submarino=Barco("Submarino",1,Enemigo)
             submarinoe=Barco("Submarino",1,Jugador1)
@@ -83,14 +81,15 @@ while Run:
         for i in range(0,BatallaNavalConfig.portaviones):
             portavion= Barco("Portaviones",4,Enemigo)
             portavione= Barco("Portaviones",4,Jugador1)
-
+        #inicializa la ventana que realiza el tablero
         BatallaNaval= window()
         BatallaNaval.run(Jugador1,Enemigo)
         break
     else:
+        #inicializa la ventana de inicio
         BatallaNavalMenu= start() 
         BatallaNavalMenu.run()
-        if(BatallaNavalMenu.out):    
+        if(BatallaNavalMenu.out):#si el programa paso por la ventana de inicio puede seguir a la ventana de configuración
             BatallaNavalConfig= menu()
         else:
             break
